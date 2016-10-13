@@ -205,6 +205,34 @@ local function lock_group_links(msg, data, target)
   end
 end
 
+local function lock_group_webpage(msg, data, target)
+  if not is_momod(msg) then
+    return
+  end
+  local group_webpage_lock = data[tostring(target)]['settings']['lock_webpage']
+  if group_webpage_lock == 'yes' then
+    return '<i>WebLink Posting is already locked!</i>'
+  else
+    data[tostring(target)]['settings']['lock_webpage'] = 'yes'
+    save_data(_config.moderation.data, data)
+    return '<i>WebLink posting has been locked</i>\n\n<b>Locked by:</b>@'..msg.from.username..''
+  end
+end
+
+local function unlock_group_webpage(msg, data, target)
+  if not is_momod(msg) then
+    return
+  end
+  local group_webpage_lock = data[tostring(target)]['settings']['lock_webpage']
+  if group_webpage_lock == 'no' then
+    return '<i>WebLink Posting is already unlocked</i>'
+  else
+    data[tostring(target)]['settings']['lock_webpage'] = 'no'
+    save_data(_config.moderation.data, data)
+    return '<i>WebLink posting has been unlocked</i>\n\n<b>Unlocked by:</b>@'..msg.from.username..''
+  end
+end
+
 local function unlock_group_links(msg, data, target)
   if not is_momod(msg) then
     return
@@ -216,6 +244,34 @@ local function unlock_group_links(msg, data, target)
     data[tostring(target)]['settings']['lock_link'] = 'no'
     save_data(_config.moderation.data, data)
     return 'Link posting has been unlocked'
+  end
+end
+
+local function lock_group_fwd(msg, data, target)
+  if not is_momod(msg) then
+    return reply_msg(msg.id,"دست نزن بچه ", ok_cb, false)
+  end
+  local group_fwd_lock = data[tostring(target)]['settings']['lock_fwd']
+  if group_fwd_lock == 'yes' then
+    return '<i>Forwarding message is Already Locked</i>'
+  else
+    data[tostring(target)]['settings']['lock_fwd'] = 'yes'
+    save_data(_config.moderation.data, data)
+    return '<i>Forwarding message has been Locked!!!</i>\n\n<b>Locked by:</b>@'..msg.from.username..''
+  end
+end
+
+local function unlock_group_fwd(msg, data, target)
+  if not is_momod(msg) then
+    return
+  end
+  local group_fwd_lock = data[tostring(target)]['settings']['lock_fwd']
+  if group_fwd_lock == 'no' then
+    return '<i>Forwarding message is Not Locked</i>'
+  else
+    data[tostring(target)]['settings']['lock_fwd'] = 'no'
+    save_data(_config.moderation.data, data)
+    return '<i>Forwarding messagehas been Unlocked<i>\n\n<b>Unlocked by:</b>@'..msg.from.username..''
   end
 end
 
@@ -568,12 +624,22 @@ end
 		end
 	end
 	if data[tostring(target)]['settings'] then
+		if not data[tostring(target)]['settings']['lock_fwd'] then
+			data[tostring(target)]['settings']['lock_fwd'] = 'no'
+		end
+	end
+	if data[tostring(target)]['settings'] then
 		if not data[tostring(target)]['settings']['lock_member'] then
 			data[tostring(target)]['settings']['lock_member'] = 'no'
 		end
 	end
+	if data[tostring(target)]['settings'] then
+		if not data[tostring(target)]['settings']['lock_webpage'] then
+			data[tostring(target)]['settings']['lock_webpage'] = 'no'
+		end
+        end
   local settings = data[tostring(target)]['settings']
-  local text = "SuperGroup settings:\nLock links : "..settings.lock_link.."\nLock flood: "..settings.flood.."\nFlood sensitivity : "..NUM_MSG_MAX.."\nLock spam: "..settings.lock_spam.."\nLock Arabic: "..settings.lock_arabic.."\nLock Member: "..settings.lock_member.."\nLock RTL: "..settings.lock_rtl.."\nLock Tgservice : "..settings.lock_tgservice.."\nLock sticker: "..settings.lock_sticker.."\nPublic: "..settings.public.."\nStrict settings: "..settings.strict
+  local text = "<b>SuperGroup settings:</b>\n\n<i>Ads Settings</i>:\n<b>Lock links :</b> "..settings.lock_link.."\n<b>Lock Forward(Fwd): "..settings.lock_fwd.."\n<b>Lock WebPage</b>:"..settings.lock_webpage.."\n<b>Lock Contacts</b>:"..settings.lock.contacts.."\n\n___________________________________________________________\n\n<i>Managing Settings:</i>:\n\n<b>Lock flood:</b> "..settings.flood.."\n<b>Flood sensitivity :</b> "..NUM_MSG_MAX.."\n<b>Lock spam:</b> "..settings.lock_spam.."\n\n_____________________________________________________________________\n\n <i>Other Locks</i>:\n\n<b>Lock Arabic:</b> "..settings.lock_arabic.."\n<b>Lock Member:</b> "..settings.lock_member.."\n<b>Lock RTL:</b> "..settings.lock_rtl.."\n<b>Lock Tgservice :</b> "..settings.lock_tgservice.."\n<b>Lock sticker:</b> "..settings.lock_sticker.."\n<b>Public:</b> "..settings.public.."\n<b>Strict settings:</b> "..settings.strict.."\n\n________________________________________________________\n\n<i>About Bot</i>\n\n<b>Bot Id:</b>@mega_maximus\n<b>Developer & Sudo:</b>@teshne"
   return text
 end
 
